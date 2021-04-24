@@ -11,7 +11,7 @@ This repository contains an <ins>unofficial</ins> implementation of the <ins>Qua
 
 - Paper : **Nearest Centroid Classiﬁcation on a Trapped Ion Quantum Computer**
 - Authors : **S. Johri, S. Debnath, A.Mocherla, A. Singh, A. Prakash, J. Kim, and I. Kerenidis**
-- Date : **2021**
+- Date : **2020**
 
 ## **Installation**
 To <ins>install</ins>, clone this repository and execute the following commands :
