@@ -166,3 +166,11 @@ for repetitions in [100, 500, 1000]:
     clf.repetitions = repetitions
     y_pred = clf.predict(X)
 ```
+
+## **Example**
+An example of the experiment on the *IRIS* dataset is given in the notebook. You can open it in Google Colab or run it on your local machine. 
+
+<p align="center">
+<img src="./noteboosk/../notebooks/iris.png" width="500">
+</p>
+
