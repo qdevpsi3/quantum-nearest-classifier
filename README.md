@@ -4,6 +4,7 @@
 [![paper](https://img.shields.io/static/v1.svg?label=Paper&message=arXiv:2012.04145&color=b31b1b)](https://arxiv.org/abs/2012.04145)
 [![packages](https://img.shields.io/static/v1.svg?label=Made%20with&message=Cirq&color=fbc43b)](https://quantumai.google/cirq)
 [![license](https://img.shields.io/static/v1.svg?label=License&message=GPL%20v3.0&color=green)](https://www.gnu.org/licenses/gpl-3.0.html)
+[![exp](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/qdevpsi3/quantum-nearest-classifier/blob/main/notebooks/experiment.ipynb)
 </div>
 
 ## **Description**
@@ -91,7 +92,35 @@ print(circuit)
                           │           │           │           │
 7: ───────────────────────S───────────S───────────S───────────S───
 ```
+### *Noise*
+You can also add gate and measurement errors to you circuit. The gate noise adds depolarizing error to the circuit whilst the measurement noise adds bit flip.
+```python
+from quantum_ncs.noise import GateNoise, MeasurementNoise
 
+circuit = ...
+
+GateNoise(error_rate=0.001).apply(circuit)
+MeasurementNoise(error_rate=0.005).apply(circuit)
+
+print(circuit)
+```
+```
+0: ───X───D(0.001)───B───D(0.001)───B───D(0.001)───B───D(0.001)───M───BF(0.005)───
+                     │              │              │              │
+1: ──────────────────┼──────────────┼──────────────S───D(0.001)───M───BF(0.005)───
+                     │              │                             │
+2: ──────────────────┼──────────────S───D(0.001)───B───D(0.001)───M───BF(0.005)───
+                     │                             │              │
+3: ──────────────────┼─────────────────────────────S───D(0.001)───M───BF(0.005)───
+                     │                                            │
+4: ──────────────────S───D(0.001)───B───D(0.001)───B───D(0.001)───M───BF(0.005)───
+                                    │              │              │
+5: ─────────────────────────────────┼──────────────S───D(0.001)───M───BF(0.005)───
+                                    │                             │
+6: ─────────────────────────────────S───D(0.001)───B───D(0.001)───M───BF(0.005)───
+                                                   │              │
+7: ────────────────────────────────────────────────S───D(0.001)───M───BF(0.005)───
+```
 ### *Functions*
 These gates are used to simulate the functions for the quantum inner product and distance estimation. For now, it requires that the inner product is positive. The argument `repetitions` specify the number of shots to perform. For example :
 ```python
@@ -104,6 +133,14 @@ y = np.random.uniform(size=dim)
 inner = quantum_inner(x,y, repetitions=500)
 dist = quantum_distance(x,y, repetitions=500)
 ```
+You can also add noise and error mitigation using arguments `error_rate` and `error_mitigation`.
+```python
+inner = quantum_inner(x,
+                      y,
+                      repetitions=500,
+                      error_rate=0.001,
+                      error_mitigation=True)
+```
 
 ### *Classifier*
 The quantum nearest centroid classifier is built using the `sklearn` base class. It behaves similarly to the classical one.
@@ -112,11 +149,20 @@ The quantum nearest centroid classifier is built using the `sklearn` base class.
 ```python
 from quantum_ncs.classifier import QuantumNearestCentroid
 
-clf = QuantumNearestCentroid(repetitions=500)
+clf = QuantumNearestCentroid(repetitions=500,
+                             error_rate=0.001,
+                             error_mitigation=True)
 
 # train
 clf.fit(X, y)
 
 # test
 y_pred = clf.predict(X)
+```
+
+You can also vary the number of measurements a posteriori.
+```python
+for repetitions in [100, 500, 1000]:
+    clf.repetitions = repetitions
+    y_pred = clf.predict(X)
 ```
